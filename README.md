@@ -3,11 +3,16 @@ api challenge deliverable for medida
 
 ![API Flow](image.png)
 
-## Steps to run this project:
+## Steps to run this project locally:
 1. python3 -m venv venv
 2. source venv/bin/activate
 3. pip install -r requirements.txt
-4. docker-compose up --build
+4. export FLASK_APP=events.py  # Linux/macOS
+5. set FLASK_APP=events.py
+6. flask run --host=0.0.0.0 --port=8000
+
+## To use docker-compose:
+docker-compose up --build
 
 ## To run testcases:
 execute "pytest" in the terminal in the directory where your test script (events_test.py) is located.
