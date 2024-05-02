@@ -1,0 +1,11 @@
+@startuml
+actor User
+rectangle "NFL Events API" {
+    User -> (API Endpoint: /events) : POST Request
+    (API Endpoint: /events) --> (Process Request) : Handle Request
+    (Process Request) --> (Fetch Data from Remote API) : Retrieve NFL Events
+    (Fetch Data from Remote API) --> (Format Data) : Prepare Response
+    (Format Data) --> (Return Response) : Send JSON Response
+    (Return Response) --> User : Receive Response
+}
+@enduml

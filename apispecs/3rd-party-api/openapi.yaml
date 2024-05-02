@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: Retrieving Events 3rd Party API 
+  description: |-
+    This is the API you need to call for getting the data,
+    which will be exposed via the Restful API 
+  contact:
+    name: Medida
+    email: challenges@medida.com
+    url: https://www.medida.com/
+  version: 0.1.0
+servers:
+  - url: http://localhost:8000
+    description: Local setup
+tags:
+  - name: scoreboard
+    description: Scoreboard
+  - name: team-rankings
+    description: Team Rankings
+paths:
+  /{league}/scoreboard:
+    get:
+      tags:
+        - scoreboard
+      summary: Getting Scoreboard
+      description: Getting Scoreboard
+      operationId: getScoreboard
+      parameters:
+        - in: path
+          name: league
+          required: true
+          schema: 
+            $ref: '#/components/schemas/LeagueEnum'
+        - in: query
+          name: since
+          description: Limiting retrieved events by date. Returned result will have timestamps greater than the date indicates here
+          required: false
+          schema: 
+            type: string
+            format: date
+        - in: query
+          name: until
+          description: Limiting retrieved events by date. Returned result will have timestamps less than the date indicates here
+          required: false
+          schema: 
+            type: string
+            format: date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scoreboard'
+              example:
+                - id: 5055c2a2-af68-4082-9834-ceb36dd0a807
+                  timestamp: "2023-01-11T14:00:00Z"
+                  away:
+                    id: ae5132a4-e4b2-4bda-9933-b75c542b8d35
+                    city: Arizona
+                    nickName: Arizona Cardinals
+                  home: 
+                    id: 8da0c96d-7b3d-41f3-9e68-29607f3babcf
+                    city: Atlanta
+                    nickName: Atlanta Falcons
+                - id: d9c18865-f89d-41de-a42e-5e4bdc2b305a
+                  timestamp: "2023-02-28T21:30:00Z"
+                  away: 
+                    id: 8da0c96d-7b3d-41f3-9e68-29607f3babcf
+                    city: Atlanta
+                    nickName: Atlanta Falcons
+                  home:
+                    id: 9ebdd9c1-b445-4076-afe1-5463cacc9138
+                    city: Carolina
+                    nickName: Carolina Panthers
+                - id: bf436983-3c42-4e45-893d-3f89d0ef3451
+                  timestamp: "2023-01-30T16:30:00Z"
+                  away: 
+                    id: 59a25bfb-e316-42c1-ac75-fc62aa34df48
+                    city: Chicago
+                    nickName: Chicago Bears
+                  home:
+                    id: 28851743-d1b5-4653-9f25-bda3a386c825
+                    city: Detroit
+                    nickName: Detroit Lions
+                - id: 7d6e1536-231a-4451-b40a-6bf0bcd2e7c3
+                  timestamp: "2023-03-08T18:30:00Z"
+                  away:
+                    id: 9ebdd9c1-b445-4076-afe1-5463cacc9138
+                    city: Carolina
+                    nickName: Carolina Panthers
+                  home: 
+                    id: 2f784ca2-9964-4d95-8d0d-67e553a70c40
+                    city: Dallas
+                    nickName: Dallas Cowboys
+                - id: 2d98e984-1197-42c5-80a0-083667891f51
+                  timestamp: "2023-05-24T22:00:00Z"
+                  away: 
+                    id: 2f784ca2-9964-4d95-8d0d-67e553a70c40
+                    city: Dallas
+                    nickName: Dallas Cowboys
+                  home: 
+                    id: 59a25bfb-e316-42c1-ac75-fc62aa34df48
+                    city: Chicago
+                    nickName: Chicago Bears
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default: 
+          $ref: '#/components/responses/UnexpectedError'
+      security:
+        - api_key_auth: []
+  /{league}/team-rankings:
+    get:
+      tags:
+        - team-rankings
+      summary: Getting Team Rankings
+      description: Getting Scoreboard
+      operationId: getTeamRankings
+      parameters:
+        - in: path
+          name: league
+          required: true
+          schema: 
+            $ref: '#/components/schemas/LeagueEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamRankings'
+              example:
+                - teamId: ae5132a4-e4b2-4bda-9933-b75c542b8d35
+                  rank: 1
+                  rankPoints: 100.3
+                - teamId: 8da0c96d-7b3d-41f3-9e68-29607f3babcf
+                  rank: 3
+                  rankPoints: 33.4
+                - teamId: 9ebdd9c1-b445-4076-afe1-5463cacc9138
+                  rank: 2
+                  rankPoints: 63.9
+                - teamId: 28851743-d1b5-4653-9f25-bda3a386c825
+                  rank: 5
+                  rankPoints: 10.2
+                - teamId: 59a25bfb-e316-42c1-ac75-fc62aa34df48
+                  rank: 4
+                  rankPoints: 18.76
+                - teamId: 2f784ca2-9964-4d95-8d0d-67e553a70c40
+                  rank: 6
+                  rankPoints: 11.01
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        default: 
+          $ref: '#/components/responses/UnexpectedError'
+      security:
+        - api_key_auth: []
+components:
+  schemas:
+    Scoreboard: 
+      type: array
+      items: 
+        $ref: '#/components/schemas/Event'
+    Event: 
+      type: object
+      properties: 
+        id: 
+          type: string
+          format: uuid
+        timestamp: 
+          type: string
+          format: date-time
+        home: 
+          $ref: '#/components/schemas/TeamInfo'
+        away: 
+          $ref: '#/components/schemas/TeamInfo'
+    TeamInfo:
+      type: object
+      properties: 
+        id: 
+          type: string
+          format: uuid
+        nickName: 
+          type: string
+        city: 
+          type: string
+    TeamRankings: 
+      type: array
+      items:
+        $ref: '#/components/schemas/TeamRanking'
+    TeamRanking:
+      type: object
+      properties:
+        teamId: 
+          type: string
+          format: uuid
+        rank:
+          type: integer
+          format: int64
+          minimum: 1
+        rankPoints: 
+          type: number
+          format: float
+          minimum: 0.0
+    LeagueEnum: 
+      type: string
+      enum:
+        - NFL
+    Problem:
+      description: "Object for returing errors according RFC-7807 - Problem Details for HTTP APIs"
+      type: object
+      readOnly: true
+      required: 
+        - title
+        - status
+      properties:
+        title:
+          type: string
+        status: 
+          type: integer
+          format: int32
+        detail:
+          type: string
+        cause: 
+          $ref: '#/components/schemas/Problem'
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  securitySchemes:
+    api_key_auth:
+      type: apiKey
+      in: header
+      name: X-API-Key      
+

@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Challenge API
+  description: |-
+    This is the API that must be implemented as a your output deliverable of this challenge
+  contact:
+    name: Medida
+    email: challenges@medida.com
+    url: https://www.medida.com/
+  version: 0.1.0
+servers:
+  - url: http://localhost:8000
+    description: Local setup
+tags:
+  - name: challenge
+    description: Challenge API
+paths:
+  /events:
+    post:
+      tags:
+        - challenge
+      summary: Challenge endpoint. Retrieving the events mashup
+      description: Challenge endpoint. Retrieving the events mashup
+      operationId: pollingEvents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/EventsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+        '400':
+          description: Bad Request
+        '500': 
+          description: Internal Server Error      
+components:
+  schemas:
+    EventsRequest: 
+      type: object
+      required: 
+        - league
+      properties: 
+        league: 
+          $ref: '#/components/schemas/LeagueEnum'
+        startDate: 
+          type: string
+          format: date
+        endDate: 
+          type: string
+          format: date
+    EventsResponse: 
+      type: array
+      items:
+        $ref: '#/components/schemas/Event'
+    Event: 
+      type: object
+      properties: 
+        eventId: 
+          type: string
+          format: uuid
+        eventDate: 
+          type: string
+          format: date
+        eventTime: 
+          type: string
+          format: time
+        homeTeamId: 
+          type: string
+          format: uuid
+        homeTeamNickName: 
+          type: string
+        homeTeamCity: 
+          type: string
+        homeTeamRank:
+          type: integer
+          format: int64
+          minimum: 1
+        homeTeamRankPoints: 
+          type: number
+          format: float
+          minimum: 0.0
+        awayTeamId: 
+          type: string
+          format: uuid
+        awayTeamNickName: 
+          type: string
+        awayTeamCity: 
+          type: string
+        awayTeamRank:
+          type: integer
+          format: int64
+          minimum: 1
+        awayTeamRankPoints: 
+          type: number
+          format: float
+          minimum: 0.0
+    LeagueEnum: 
+      type: string
+      enum:
+        - NFL
+

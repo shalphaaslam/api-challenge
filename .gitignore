@@ -1,0 +1,6 @@
+__pycache__/*
+.vscode/*
+api_logs.log
+.pytest_cache
+venv/
+__pycache__
