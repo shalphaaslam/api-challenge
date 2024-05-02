@@ -1,6 +1,8 @@
 # Medida api-challenge
 api challenge deliverable for medida
 
+![API Flow](image.png)
+
 ## Steps to run this project:
 1. python3 -m venv venv
 2. source venv/bin/activate
