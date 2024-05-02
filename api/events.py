@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 
 import requests
 from datetime import datetime
@@ -30,7 +30,7 @@ def get_events():
     start_date = payload.get('start_date')
     end_date = payload.get('end_date')
     events = fetch_nfl_events(league, start_date, end_date)
-    return jsonify(events)
+    return events
 
 def fetch_nfl_events(league, start_date=None, end_date=None):
     base_url = "http://172.18.0.1:9000"  # Replace the Ip address of the remote API
@@ -70,7 +70,14 @@ def fetch_nfl_events(league, start_date=None, end_date=None):
             event = Event.from_scoreboard_data(event_data, team_rankings_map)
             formatted_events.append(event)
 
-        return json.dumps(formatted_events, cls=CustomJSONEncoder)  # Serialize using custom JSON encoder
+        # Create a response object
+        response = make_response(json.dumps(formatted_events, cls=CustomJSONEncoder)) # Serialize using custom JSON encoder
+
+        # Set the content type header to indicate JSON content
+        response.headers['Content-Type'] = 'application/json'
+
+        # Return the response
+        return response
     
 
     except requests.exceptions.RequestException as e:
