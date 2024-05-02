@@ -1,13 +1,14 @@
 import json
 import os
 import sys
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 
 import requests
 from datetime import datetime
 import logging
 from event.event import Event
 from event.customencoder import CustomJSONEncoder
+
 
 app = Flask(__name__)
 
@@ -71,45 +72,17 @@ def fetch_nfl_events(league, start_date=None, end_date=None):
 
         return json.dumps(formatted_events, cls=CustomJSONEncoder)  # Serialize using custom JSON encoder
     
-        formatted_events = []
-        for event in scoreboard_data:
-            home_team_id = event["home"]["id"]
-            away_team_id = event["away"]["id"]
-
-            # Retrieve ranking data for home and away teams
-            home_rank, home_rank_points = team_rankings_map.get(home_team_id, (None, None))
-            away_rank, away_rank_points = team_rankings_map.get(away_team_id, (None, None))
-
-            formatted_event = {
-                "eventId": event["id"],
-                "eventDate": datetime.strptime(event["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d"),
-                "eventTime": datetime.strptime(event["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%H:%M:%S"),
-                "homeTeamId": home_team_id,
-                "homeTeamNickName": event["home"]["nickName"],
-                "homeTeamCity": event["home"]["city"],
-                "homeTeamRank": home_rank,
-                "homeTeamRankPoints": home_rank_points,
-                "awayTeamId": away_team_id,
-                "awayTeamNickName": event["away"]["nickName"],
-                "awayTeamCity": event["away"]["city"],
-                "awayTeamRank": away_rank,
-                "awayTeamRankPoints": away_rank_points
-            }
-            formatted_events.append(formatted_event)
-
-        return formatted_events
 
     except requests.exceptions.RequestException as e:
         # Handle request exceptions (e.g., connection error, HTTP error)
         print(f"Error fetching NFL events: {e}")
-        return None
+        abort(400)  # Return 400 Bad Request
 
     except ValueError as e:
         # Handle JSON decoding errors
         print(f"Error parsing JSON response: {e}")
-        return None
+        abort(500) 
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
     app.run(host='0.0.0.0', port=8000, debug=True) 

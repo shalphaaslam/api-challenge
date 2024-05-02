@@ -23,9 +23,7 @@ def test_get_events_positive(app):
     with app.test_request_context('/events', method='POST', json={'league': 'NFL', 'start_date': '', 'end_date': ''}):
         response = get_events()
         assert response is not None
-        # assert isinstance(response, list)
         # assert len(response) > 0
-        # Add more assertions based on expected response structure
 
 
 @pytest.mark.xfail(reason="Expected to fail because The remote API responds even with no league or invalidLeague")
@@ -54,7 +52,6 @@ def test_fetch_nfl_events_positive():
                 'away': {'id': 11, 'nickName': 'Away Team', 'city': 'Away City'},
                 'home': {'id': 12, 'nickName': 'Home Team', 'city': 'Home City'}
             }
-            # Add more sample scoreboard data entries as needed
         ]
         mock_get.return_value.json.return_value = scoreboard_data
 
@@ -62,15 +59,12 @@ def test_fetch_nfl_events_positive():
         team_rankings_data = [
             {'teamId': 11, 'rank': 1, 'rankPoints': 100.0},
             {'teamId': 12, 'rank': 2, 'rankPoints': 90.0}
-            # Add more sample team rankings data entries as needed
         ]
         mock_get.side_effect = [MockResponse(scoreboard_data), MockResponse(team_rankings_data)]
 
         events = fetch_nfl_events(league, start_date, end_date)
         assert events is not None
-        assert isinstance(events, list)
         assert len(events) > 0
-        # Add more assertions based on expected formatted event data
 
 
 class MockResponse:
