@@ -8,18 +8,25 @@ from datetime import datetime
 import logging
 from event.event import Event
 from event.customencoder import CustomJSONEncoder
+from urllib.parse import urljoin
 
 
 app = Flask(__name__)
 
-# Configure logging to write in log folder
-logging.basicConfig(filename='api_logs.log', level=logging.INFO, filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
+# Create a logger
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)  # Set the logging level to INFO
 
-# Add a stream handler to print logs on the console
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logging.getLogger().addHandler(handler)
+# Create a console handler and set its log level to INFO
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# Create a formatter and add it to the console handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+
+# Add the console handler to the logger
+logger.addHandler(console_handler)
 
 @app.route('/events', methods=['POST'])
 def get_events():
@@ -33,7 +40,7 @@ def get_events():
     return events
 
 def fetch_nfl_events(league, start_date=None, end_date=None):
-    base_url = "http://172.18.0.1:9000"  # Replace the Ip address of the remote API
+    base_url = os.getenv('REMOTE_API_URL', 'http://172.18.0.1:9000')
     scoreboard_endpoint = f"/{league}/scoreboard"
     team_rankings_endpoint = f"/{league}/team-rankings"
 
@@ -46,23 +53,26 @@ def fetch_nfl_events(league, start_date=None, end_date=None):
 
     try:
         # Make GET request to retrieve NFL events data (scoreboard)
-        logging.debug(f"Making GET request to {base_url + scoreboard_endpoint} with params {scoreboard_params}")
-        scoreboard_response = requests.get(base_url + scoreboard_endpoint, params=scoreboard_params)
+        scoreboard_url = urljoin(base_url, scoreboard_endpoint)
+        logging.info(f"Making GET request to {scoreboard_url} with params {scoreboard_params}")
+        scoreboard_response = requests.get(scoreboard_url, params=scoreboard_params)
+        
         scoreboard_response.raise_for_status()
         scoreboard_data = scoreboard_response.json()
-        logging.debug("scoreboard_data: ", scoreboard_data)
+        logging.info("scoreboard_data: ", scoreboard_data)
 
 
+        team_rank_url = urljoin(base_url, team_rankings_endpoint)
         # Make GET request to retrieve team rankings data
-        print(f"Making GET request to {base_url + team_rankings_endpoint}")
-        team_rankings_response = requests.get(base_url + team_rankings_endpoint)
+        print(f"Making GET request to {team_rank_url}")
+        team_rankings_response = requests.get(team_rank_url)
         team_rankings_response.raise_for_status()
         team_rankings_data = team_rankings_response.json()
-        logging.debug("team_rankings_data: ", team_rankings_data)
+        logging.info("team_rankings_data: ", team_rankings_data)
 
         # Create a dictionary mapping team IDs to ranking data for quick lookup
         team_rankings_map = {team['teamId']: (team['rank'], team['rankPoints']) for team in team_rankings_data}
-        logging.debug("Team Rankings Map: %s", team_rankings_map)
+        logging.info("Team Rankings Map: %s", team_rankings_map)
 
         # Format the events data into the desired response format (EventsResponse schema)
         formatted_events = []

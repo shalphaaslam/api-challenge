@@ -16,3 +16,4 @@ services:
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_RUN_PORT=8000  # Specify Flask run port
       - FLASK_DEBUG=1  # Set Flask debug mode
+      - REMOTE_API_URL=http://172.18.0.1:9000 # Replace the Ip address of the remote API
