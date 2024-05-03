@@ -1,3 +1,5 @@
+# Author: Shalpha Aslam
+# Description: This is python model class to be used in API 
 from datetime import datetime
 
 class Event:

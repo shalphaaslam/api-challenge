@@ -1,3 +1,4 @@
+# Author: Shalpha Aslam
 import json
 import os
 import sys
@@ -30,8 +31,16 @@ logger.addHandler(console_handler)
 
 @app.route('/events', methods=['POST'])
 def get_events():
-    # Handle POST request to retrieve NFL events
-    # Logic to fetch events from remote API and format response
+    """
+    Handle POST request to retrieve NFL events by retrieve NFL scoreboard and ranking data from a remote API.
+
+    :param league: The sports league (e.g., 'NFL').
+    :param start_date: Optional start date for filtering events.
+    :param end_date: Optional end date for filtering events.
+    :return: List of formatted NFL events.
+    :author: Shalpha Aslam
+    """
+
     payload = request.json
     league = payload.get('league')
     start_date = payload.get('start_date')

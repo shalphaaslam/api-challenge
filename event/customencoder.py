@@ -1,3 +1,5 @@
+# Author: Shalpha Aslam
+# Description: This is a serializer class .
 import json
 from datetime import datetime
 from api.events import Event  # Import your Event class
