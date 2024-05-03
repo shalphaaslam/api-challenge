@@ -59,7 +59,7 @@ def fetch_nfl_events(league, start_date=None, end_date=None):
         
         scoreboard_response.raise_for_status()
         scoreboard_data = scoreboard_response.json()
-        logging.info("scoreboard_data: ", scoreboard_data)
+        logging.info("scoreboard_data: %s", scoreboard_data)
 
 
         team_rank_url = urljoin(base_url, team_rankings_endpoint)
@@ -68,7 +68,7 @@ def fetch_nfl_events(league, start_date=None, end_date=None):
         team_rankings_response = requests.get(team_rank_url)
         team_rankings_response.raise_for_status()
         team_rankings_data = team_rankings_response.json()
-        logging.info("team_rankings_data: ", team_rankings_data)
+        logging.info("team_rankings_data: %s", team_rankings_data)
 
         # Create a dictionary mapping team IDs to ranking data for quick lookup
         team_rankings_map = {team['teamId']: (team['rank'], team['rankPoints']) for team in team_rankings_data}

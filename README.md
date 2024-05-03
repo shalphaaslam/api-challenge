@@ -1,5 +1,7 @@
 # Medida api-challenge
-api challenge deliverable for medida
+API challenge deliverable for medida
+
+API Flow:
 
 ![API Flow](image.png)
 
