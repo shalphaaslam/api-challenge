@@ -1,4 +1,4 @@
-# Medida api-challenge
+# API-challenge
 API challenge deliverable for medida
 
 API Flow:
