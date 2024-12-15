@@ -1,5 +1,5 @@
 # API-challenge
-API challenge deliverable for medida
+API challenge deliverable
 
 API Flow:
 
